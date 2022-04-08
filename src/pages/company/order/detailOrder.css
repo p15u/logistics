@@ -1,0 +1,148 @@
+.avata {
+  position: absolute;
+  width: 92px;
+  height: 90px;
+}
+.title {
+  color: var(--main-color);
+}
+.nvgh {
+  background-color: var(--forth-color);
+}
+.ttkh {
+  background-color: var(--third-color);
+  padding-top: 10px;
+  border-radius: 10px;
+  margin-top: 3px;
+  margin-bottom: 5px;
+  color: #000;
+}
+.note {
+  border: 1px solid var(--third-color);
+  border-radius: 5px;
+  padding: 10px;
+  margin-left: 15px;
+  margin-right: 15px;
+}
+.property {
+  width: "200px";
+}
+.stt {
+  font-size: 16px;
+  font-style: italic;
+  font-weight: bold;
+  padding-top: 15px;
+}
+
+.imgShipper {
+  width: 100px;
+}
+.titleShipper {
+  font-weight: bold;
+  text-align: center;
+  width: 220px;
+}
+
+.nameNhanvien {
+  font-style: italic;
+  font-size: 18px;
+  text-decoration: none;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.sodienthoai {
+  font-style: normal;
+  font-size: 16px;
+  color: rgba(0, 0, 0, 0.6);
+  margin-top: -15px;
+}
+
+.xacthuc {
+  position: absolute;
+  width: 543.09px;
+  height: 25.36px;
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 16px;
+  line-height: 35px;
+  display: flex;
+  align-items: center;
+  letter-spacing: -0.28px;
+
+  color: #ca0a0a;
+}
+
+.headerss {
+  font-weight: bold;
+  margin-bottom: 50px;
+  font-size: 25px;
+}
+
+.hr {
+  text-align: center;
+  width: 100%;
+  border: 1px solid #e0e0e0;
+  background-color: #e0e0e0;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+.infor {
+  font-weight: bold;
+}
+
+.image {
+  width: 35px;
+  height: 39px;
+  margin-top: 10px;
+}
+
+.text-in4 {
+  margin-top: 10px;
+}
+
+.hoantra {
+  font-weight: bold;
+  font-size: 20px;
+  color: #f0635a;
+  width: 62.43px;
+  height: 17.97px;
+}
+.stt1 {
+  color: blue;
+  margin-left: 10px;
+}
+
+.stt2 {
+  color: green;
+  margin-left: 10px;
+}
+.stt3 {
+  color: gray;
+  margin-left: 10px;
+}
+.stt4 {
+  color: red;
+  margin-left: 10px;
+}
+.addressStt {
+  font-size: 13px;
+  margin-left: 10px;
+}
+.sep {
+  /* border: 0.5px solid gray; */
+  height: 0.5px;
+  background-color: #aaa;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+.propertyName {
+  width: 300px;
+  background-color: #000;
+}
+
+.nameProduct {
+  font-size: 16;
+  color: red;
+}

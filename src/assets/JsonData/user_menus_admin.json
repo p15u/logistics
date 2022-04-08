@@ -1,0 +1,22 @@
+[
+  {
+    "icon": "bx bx-user",
+    "content": "Profile",
+    "route": "/admin/profile"
+  },
+  {
+    "icon": "bx bx-wallet-alt",
+    "content": "My Wallet",
+    "route": "/admin/"
+  },
+  {
+    "icon": "bx bx-cog",
+    "content": "Settings",
+    "route": "/admin/"
+  },
+  {
+    "icon": "bx bx-log-out-circle bx-rotate-180",
+    "content": "Logout",
+    "route": "/login"
+  }
+]

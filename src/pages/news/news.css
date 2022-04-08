@@ -1,0 +1,153 @@
+td i {
+  font-size: 1.5rem;
+}
+
+.item-delete:hover {
+  color: red;
+}
+
+.item-edit:hover {
+  color: #008000;
+}
+
+.display-flex,
+.news-content {
+  display: flex;
+  display: -webkit-flex;
+}
+
+.news-form {
+  width: 70%;
+}
+
+.news-image {
+  background-size: 200px 200px;
+  border-style: solid;
+  border-width: 2px;
+  height: 200px;
+  position: relative;
+  text-align: center;
+  width: 200px;
+  margin-right: 75px;
+  margin-bottom: 50px;
+}
+
+.news-avatar-image {
+  width: 120px;
+  height: 120px;
+  color: #fff;
+  line-height: 46px;
+  text-align: center;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.news-image picture img {
+  display: inline;
+  height: 100%;
+  width: 100%;
+}
+
+.news-image picture img input {
+  display: inline;
+  height: 100%;
+  width: 100%;
+}
+
+.edit-title {
+  display: inline;
+  font-weight: 900;
+  margin-right: 10px;
+  width: 15%;
+}
+
+.news-button {
+  text-decoration: none;
+}
+
+.news-button:hover {
+  color: var(--txt-white);
+}
+.news-button-cancel:hover {
+  color: var(--txt-color);
+  background-color: var(--second-bg);
+}
+.news-button-cancel {
+  background-color: var(--main-bg);
+  color: var(--txt-color);
+  border-style: solid;
+  border-width: 2px;
+  padding: 16px 32px;
+
+  margin: 4px 2px;
+  border-radius: 10px;
+  font-size: 1rem;
+}
+
+.input-Content {
+  width: 100%;
+  font-size: 1rem;
+  color: var(--txt-color);
+  background-color: var(--main-bg);
+  padding: 2px 20px 5px 20px;
+  box-sizing: border-box;
+}
+
+.news-button {
+  background-color: var(--second-color);
+
+  border-width: 2px;
+  padding: 12px 22px;
+  text-decoration: none;
+  margin: 4px 10px;
+  border-radius: 10px;
+  font-size: 1rem;
+}
+
+@media screen and (max-width: 1600px) {
+}
+
+@media screen and (max-width: 1360px) {
+  .news-content {
+    flex-direction: column;
+    -moz-flex-direction: column;
+    -webkit-flex-direction: column;
+    -o-flex-direction: column;
+    -ms-flex-direction: column;
+    justify-content: center;
+    -moz-justify-content: center;
+    -webkit-justify-content: center;
+    -o-justify-content: center;
+    -ms-justify-content: center;
+  }
+  .news-form {
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 1200px) {
+}
+
+@media screen and (max-width: 1024px) {
+}
+
+@media screen and (max-width: 992px) {
+}
+
+@media screen and (max-width: 768px) {
+}
+
+@media screen and (max-width: 620px) {
+}
+
+@media screen and (max-width: 575px) {
+}
+
+@media screen and (max-width: 480px) {
+}
+
+@media screen and (max-width: 400px) {
+}
+
+@media screen and (max-width: 320px) {
+}
