@@ -7,7 +7,25 @@
 .profile-form {
   width: 70%;
 }
-
+.profileimage2 {
+  background-size: 200px 200px;
+  /* border-radius: 100%; */
+  /* border-style: solid; */
+  /* border-width: 2px; */
+  height: 200px;
+  /* position: relative; */
+  /* text-align: center; */
+  width: 200px;
+  margin-right: 75px;
+  margin-bottom: 50px;
+}
+.imgSelect {
+  /* border-style: solid; */
+  /* border-width: 2px; */
+  width: 250px;
+  margin-top: -40px;
+  padding-top: -10px;
+}
 .profile-image {
   background-size: 200px 200px;
   border-radius: 100%;
@@ -49,7 +67,7 @@ figure {
 
 .form-group {
   position: relative;
-  margin-bottom: 25px;
+  margin-bottom: 10px;
   display: flex;
 }
 .form-group:last-child {
@@ -67,6 +85,10 @@ figure {
 .i-cont {
   display: inline;
   width: 75%;
+}
+.i-cont2 {
+  display: inline;
+  width: 95%;
 }
 
 .title {
@@ -86,10 +108,6 @@ figure {
   color: var(--txt-white);
 }
 
-.btn-cancel:hover {
-  color: var(--second-color);
-}
-
 .profile-button:hover {
   color: var(--txt-white);
 }
@@ -98,7 +116,7 @@ figure {
   background-color: var(--second-bg);
 }
 .profile-button-cancel {
-  background-color: var(--main-bg);
+  background-color: #ccc;
   color: var(--txt-color);
   border-style: solid;
   border-width: 2px;
@@ -119,6 +137,17 @@ figure {
 
 .profile-button {
   background-color: var(--second-color);
+  border-style: solid;
+  border-width: 2px;
+  border-width: 2px;
+  padding: 12px 22px;
+  text-decoration: none;
+  margin: 4px 10px;
+  border-radius: 10px;
+  font-size: 1rem;
+}
+.clear-button {
+  background-color: "gray";
 
   border-width: 2px;
   padding: 12px 22px;
@@ -127,7 +156,6 @@ figure {
   border-radius: 10px;
   font-size: 1rem;
 }
-
 input[type="file"] {
   display: none;
 }

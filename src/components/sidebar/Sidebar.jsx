@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import Cookies from "js-cookie";
 import "./sidebar.css";
 
-import logo from "../../assets/images/Logo_Logistics_2.png";
+import logo from "../../assets/images/logo_web.png";
 
 import sidebar_items_admin from "../../assets/JsonData/sidebar_routes_admin.json";
 import sidebar_items_company from "../../assets/JsonData/slidebar_routes_company.json";

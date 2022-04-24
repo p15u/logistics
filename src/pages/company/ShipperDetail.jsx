@@ -5,15 +5,24 @@ import {
   PermIdentity,
   PhoneAndroid,
 } from "@material-ui/icons";
-import "./css_pages/user.css";
-import "./css_pages/switch.css";
+import "./../css_pages/user.css";
+import "./../css_pages/switch.css";
 import { Link } from "react-router-dom";
 import Cookies from "js-cookie";
 import { FaEye } from "react-icons/fa";
-import OrderService from "../service/Service/OrderService";
-import ShipperService from "../service/Service/ShipperService.js";
-import CustomerService from "../service/Service/CustomerService";
+import OrderService from "../../service/Service/OrderService";
+import ShipperService from "../../service/Service/ShipperService.js";
+import CustomerService from "../../service/Service/CustomerService";
 import { Row, Col } from "react-bootstrap";
+
+import BootstrapTable from "react-bootstrap-table-next";
+import filterFactory, {
+  textFilter,
+  selectFilter,
+  numberFilter,
+} from "react-bootstrap-table2-filter";
+import paginationFactory from "react-bootstrap-table2-paginator";
+import profileService from "../../service/Service/profileService";
 import {
   Modal,
   Button,
@@ -22,15 +31,7 @@ import {
   Alert,
   Form,
 } from "react-bootstrap";
-import BootstrapTable from "react-bootstrap-table-next";
-import filterFactory, {
-  textFilter,
-  selectFilter,
-  numberFilter,
-} from "react-bootstrap-table2-filter";
-import paginationFactory from "react-bootstrap-table2-paginator";
-import PostService from "../service/Service/PostService";
-
+import PostService from "../../service/Service/PostService";
 export class ShipperDetail extends PureComponent {
   constructor(props) {
     super(props);
@@ -58,6 +59,7 @@ export class ShipperDetail extends PureComponent {
         weightCar: 12,
         note: "",
       },
+      shipperPost: [], // shipper dang bai
       dataShipper: [],
       idUser: this.props.location.state.data,
       show: false,
@@ -66,12 +68,10 @@ export class ShipperDetail extends PureComponent {
       show4: false,
       note: "",
       mess: "",
-      shipperPost: [], // shipper dang bai
 
       //Thong tin hang hoa
       dataInfo: [],
       order: null,
-      temp: null,
     };
   }
   componentDidMount() {
@@ -84,13 +84,9 @@ export class ShipperDetail extends PureComponent {
   handleShow2 = () => this.setState({ ...this.state, show2: true });
   handleClose3 = () => this.setState({ ...this.state, show3: false });
   handleShow3 = () => this.setState({ ...this.state, show3: true });
-
   handleClose4 = () =>
     this.setState({ ...this.state, show4: false, mess: "", note: "" });
-  handleShow4 = () => {
-    this.setState({ ...this.state, show4: true });
-  };
-
+  handleShow4 = () => this.setState({ ...this.state, show4: true });
   getStatus(status) {
     switch (status) {
       case 1:
@@ -113,19 +109,25 @@ export class ShipperDetail extends PureComponent {
   }
   //Lấy Dữ Liệu
   getData() {
+    // let data = {
+    //   // idUser: `${window.location.href.slice(-1)}`,
+    // idUser: this.props.location.state.data,
+    // };
+    // profileService
+    //   .information(this.state.idUser)
+    //   .then((res) => console.log(res.data));
+    // let id = this.props.location.state.data;
     ShipperService.getShipperById(this.state.idUser).then((res) => {
       this.setState({
-        ...this.state,
         data: res.data,
-        temp: res.data,
       });
-      console.log(res.data);
     });
 
     OrderService.getByIdShipper(this.state.idUser).then((res) => {
       this.setState({
         dataInfo: res.data,
       });
+      console.log(res.data);
     });
     PostService.getPost(this.state.idUser).then((res) => {
       this.setState({
@@ -133,78 +135,6 @@ export class ShipperDetail extends PureComponent {
       });
     });
   }
-  //Cập nhật trạng thái
-  updateStatus = async () => {
-    var data = this.state.data;
-    var temp = this.state.data;
-    console.log(this.state.data);
-    if (data.status === 0 || data.status === 3) {
-      data.status = 1;
-      temp.status = 1;
-    } else {
-      if (this.state.note == "") {
-        this.setState({
-          ...this.state,
-          mess: "Vui lòng nhập lí do khóa tài khoản",
-        });
-        return;
-      } else {
-        data.note = this.state.note;
-      }
-      data.status = 0;
-      temp.status = 0;
-    }
-    console.log(this.state.data.status);
-
-    await CustomerService.updateStatus(data).then((res) => {
-      if (res.data == 1) {
-        this.handleShow2();
-        window.setTimeout(() => {
-          this.setState({ ...this.state, show2: false });
-        }, 2000);
-      } else {
-        this.handleShow3();
-        window.setTimeout(() => {
-          this.setState({ ...this.state, show3: false });
-        }, 2000);
-      }
-    });
-
-    this.setState({ ...this.state, data: temp });
-    this.handleClose();
-    this.handleClose4();
-  };
-  //Cập nhật trạng thái
-  activeAccount = async () => {
-    var data = this.state.data;
-    data.status = 1;
-    await CustomerService.activeAccount(data).then((res) => {
-      console.log(res.data + "????????????????????????/");
-      if (res.data == 1) {
-        this.handleShow2();
-        window.setTimeout(() => {
-          this.setState({ ...this.state, show2: false });
-        }, 2000);
-      } else {
-        this.handleShow3();
-        window.setTimeout(() => {
-          this.setState({ ...this.state, show3: false });
-        }, 2000);
-      }
-    });
-
-    this.setState({ ...this.state, data: data });
-    this.handleClose();
-    this.handleClose4();
-  };
-  viewImg = (avatar) => {
-    var image = new Image();
-    image.src = "data:image/jpg;base64," + avatar;
-
-    var w = window.open("");
-    w.document.write(image.outerHTML);
-    w.document.close();
-  };
   getStatusBtn(stt) {
     if (stt == 0) {
       return (
@@ -263,23 +193,50 @@ export class ShipperDetail extends PureComponent {
     } else {
       return (
         <div>
-          <OverlayTrigger
-            placement="right"
-            delay={{ show: 250, hide: 400 }}
-            overlay={
-              <Tooltip id="button-tooltip" {...this.props}>
-                Click để duyệt tài khoản
-              </Tooltip>
-            }
-          >
-            <button onClick={this.handleShow} className="userUpdateButtonWait">
-              Đang chờ duyệt
-            </button>
-          </OverlayTrigger>
+          <button className="userUpdateButtonWait">Đang chờ duyệt</button>
         </div>
       );
     }
   }
+  //Cập nhật trạng thái
+  updateStatus = async () => {
+    var data = this.state.data;
+    console.log(this.state.note);
+
+    if (data.status === 0) {
+      data.status = 1;
+    } else {
+      if (this.state.note == "") {
+        this.setState({
+          ...this.state,
+          mess: "Vui lòng nhập lí do khóa tài khoản",
+        });
+        return;
+      } else {
+        data.note = this.state.note;
+      }
+      data.status = 0;
+    }
+
+    await CustomerService.updateStatus(data).then((res) => {
+      if (res.data == 1) {
+        this.handleShow2();
+        window.setTimeout(() => {
+          this.setState({ ...this.state, show2: false });
+        }, 2000);
+      } else {
+        this.handleShow3();
+        window.setTimeout(() => {
+          this.setState({ ...this.state, show3: false });
+        }, 2000);
+      }
+    });
+
+    this.setState({ ...this.state, data: data });
+    this.handleClose();
+    this.handleClose4();
+  };
+
   routeChange(item) {
     let path = `/company/orderDetail`;
 
@@ -293,105 +250,6 @@ export class ShipperDetail extends PureComponent {
   }
 
   render() {
-    const columns = [
-      {
-        dataField: "idInfo",
-        text: "Mã số",
-        sort: true,
-        headerStyle: (colum, colIndex) => {
-          return {
-            width: "80px",
-          };
-        },
-
-        style: {
-          width: "80px",
-        },
-      },
-
-      {
-        dataField: "informationline.nameProduct",
-        text: "Tên sản phẩm",
-        sort: true,
-        style: {
-          width: "200px",
-        },
-        filter: textFilter({
-          style: {
-            height: "35px",
-            borderRadius: "10px",
-            borderWidth: "1px",
-            width: "150px",
-          },
-          placeholder: "Nhập tên...",
-          onClick: (e) => console.log(e),
-        }),
-        headerStyle: (colum, colIndex) => {
-          return { width: "200px", textAlign: "center" };
-        },
-      },
-      {
-        dataField: "informationline.kilomet",
-        text: "Khoảng cách",
-
-        sort: true,
-        style: {
-          width: "120px",
-        },
-
-        headerStyle: (colum, colIndex) => {
-          return { width: "120px", textAlign: "center" };
-        },
-      },
-
-      {
-        dataField: "informationline.phiShip",
-        text: "Phí ship ",
-        sort: true,
-        style: {
-          width: "100px",
-        },
-        headerStyle: (colum, colIndex) => {
-          return { width: "100px", textAlign: "center" };
-        },
-      },
-      {
-        dataField: "informationline.priceProduct",
-        text: "Thu hộ ",
-        sort: true,
-        style: {
-          width: "100px",
-        },
-        headerStyle: (colum, colIndex) => {
-          return { width: "100px", textAlign: "center" };
-        },
-      },
-      {
-        dataField: "time",
-        text: "Thời gian",
-        sort: true,
-        style: {
-          width: "210px",
-        },
-        headerStyle: (colum, colIndex) => {
-          return { width: "210px", textAlign: "center" };
-        },
-      },
-
-      {
-        dataField: "status",
-        text: "Trạng thái",
-        style: {
-          width: "248px",
-        },
-        headerStyle: (colum, colIndex) => {
-          return { width: "248px", textAlign: "center" };
-        },
-
-        formatter: (cell, row, rowIndex, extraData) =>
-          this.getStatus(row.status),
-      },
-    ];
     const columnsPost = [
       {
         dataField: "idShipperPost",
@@ -499,14 +357,14 @@ export class ShipperDetail extends PureComponent {
         <div className="card">
           <div className="card__body">
             <Row>
-              <Col style={{ marginLeft: "10px" }}>
+              <Col>
                 <h5>
                   <a
                     style={{
                       textDecoration: "none",
                       color: `var(--text-color)`,
                     }}
-                    href="/admin/shipper"
+                    href="/company/shipper"
                   >
                     Danh sách tài xế
                   </a>
@@ -532,12 +390,44 @@ export class ShipperDetail extends PureComponent {
                     Mã người dùng : {this.state.data.idUser}
                   </span>
                 </div>
-                {/* <Button variant="contained" onClick={this.handleShow()}> */}
+                {/* <Button variant="contained" onClick={this.handleShow}> */}
                 <div
                   className="userUpdateRight"
                   style={{ textDecoration: "none", color: "white" }}
                 >
                   {this.getStatusBtn(this.state.data.status)}
+                  {/* {this.state.data.status == 1 ? (
+                      <OverlayTrigger
+                        placement="right"
+                        delay={{ show: 250, hide: 400 }}
+                        overlay={
+                          <Tooltip id="button-tooltip" {...this.props}>
+                            Click để Khóa tài khoản
+                          </Tooltip>
+                        }
+                      >
+                        <button className="userUpdateButtonSS">
+                          Hoạt động
+                        </button>
+                      </OverlayTrigger>
+                    ) : (
+                      <OverlayTrigger
+                        placement="right"
+                        delay={{ show: 250, hide: 400 }}
+                        overlay={
+                          <Tooltip id="button-tooltip" {...this.props}>
+                            Click để Mở tài khoản
+                          </Tooltip>
+                        }
+                      >
+                        <button
+                          // style={{ textDecoration: "none", color: "white" }}
+                          className="userUpdateButtonER"
+                        >
+                          Ngưng hoạt động
+                        </button>
+                      </OverlayTrigger>
+                    )} */}
                 </div>
                 {/* </Button> */}
               </div>
@@ -582,23 +472,16 @@ export class ShipperDetail extends PureComponent {
                     {this.state.data.idShipper}
                   </span>
                 </div>
-                {this.state.data.nameCompany != null ? (
-                  <div className="userShowInfo">
-                    <span className="userShowUsername">Tên Công Ty : </span>
-                    <span className="userShowInfoTitle">
-                      {this.state.data.nameCompany}
-                    </span>
-                  </div>
-                ) : (
-                  <div className="userShowInfo">
-                    <span className="userShowUsername">Tên Công Ty : </span>
-                    <span className="userShowInfoTitle">Chưa có công ty</span>
-                  </div>
-                )}
                 <div className="userShowInfo">
-                  <span className="userShowUsername">CMT/CCCD/CMND : </span>
+                  <span className="userShowUsername">Công Ty : </span>
                   <span className="userShowInfoTitle">
-                    {this.state.data.cmtCode}
+                    {this.state.data.nameCompany}
+                  </span>
+                </div>
+                <div className="userShowInfo">
+                  <span className="userShowUsername">cmtCode : </span>
+                  <span className="userShowInfoTitle">
+                    {this.state.data.numberPlate}
                   </span>
                 </div>
                 <div className="userShowInfo">
@@ -609,7 +492,7 @@ export class ShipperDetail extends PureComponent {
                 </div>
                 <div className="userShowInfo">
                   <span className="userShowUsername">Giấy Phép : </span>
-                  <div className="userShowTop">
+                  <div className="userShowTop" style={{ marginLeft: "10px" }}>
                     <img
                       src={`data:image/png;base64,${this.state.data.licensePlates}`}
                       alt="Giấy phép kinh doanh"
@@ -624,22 +507,11 @@ export class ShipperDetail extends PureComponent {
           </div>
           <div>
             <div className="card">
-              <div>
-                <div>
-                  <h6 className="title">Danh sách đơn hàng:</h6>
-                </div>
-                <BootstrapTable
-                  keyField="idUser"
-                  data={this.state.dataInfo}
-                  columns={columns}
-                  // rowEvents={tableRowEvents}
-                  filter={filterFactory()}
-                  defaultPageSize={10}
-                  pagination={paginationFactory(options)}
-                  bordered={false}
-                />
+              <div className="ttkh">
+                <h5 style={{ padding: "5px" }}>Danh sách đơn hàng</h5>
               </div>
-              {/* <table>
+
+              <table>
                 <thead>
                   <tr>
                     <th>Mã Đơn</th>
@@ -675,26 +547,47 @@ export class ShipperDetail extends PureComponent {
                     );
                   })}
                 </tbody>
-              </table> */}
+              </table>
             </div>
           </div>
           <div>
             <div className="card">
-              <div>
-                <div>
-                  <h6 className="title">Danh sách bài đăng:</h6>
-                </div>
-                <BootstrapTable
-                  keyField="idUser"
-                  data={this.state.shipperPost}
-                  columns={columnsPost}
-                  // rowEvents={tableRowEvents}
-                  filter={filterFactory()}
-                  defaultPageSize={10}
-                  pagination={paginationFactory(options)}
-                  bordered={false}
-                />
+              <div className="ttkh">
+                <h5 style={{ padding: "5px" }}>Danh sách bài đăng</h5>
               </div>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Mã Đơn</th>
+                    <th>Tiêu đề</th>
+                    <th>Điểm đi</th>
+                    <th>Điểm đến</th>
+                    <th>Ngày đăng</th>
+                    <th>Thời gian dự kiến đến</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {this.state.shipperPost.map((item) => {
+                    return (
+                      <tr
+                        key={item.idShipperPost}
+                        onClick={() => {
+                          this.routeChange(item);
+                        }}
+                      >
+                        <td>
+                          <b>#{item.idShipperPost}</b>
+                        </td>
+                        <td>{item.title}</td>
+                        <td>{item.fromAddress}</td>
+                        <td>{item.toAddress}</td>
+                        <td>{item.datePost}</td>
+                        <td>{item.dateExpect}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
@@ -740,10 +633,10 @@ export class ShipperDetail extends PureComponent {
               <Modal.Title>Thay đổi trạng thái</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-              {this.state.data.status == 3 ? (
+              {this.state.data.status == 1 ? (
                 <p>
-                  Bạn có chắc muốn <b>Duyệt</b> tài khoản này không? Nếu bạn xác
-                  nhận họ có thể đăng nhập vào ứng dụng.
+                  Bạn có chắc muốn <b>Ngưng hoạt động</b> tài khoản này không?
+                  Nếu bạn xác nhận họ sẽ không thể đăng nhập vào ứng dụng.
                 </p>
               ) : (
                 <p>
@@ -753,14 +646,7 @@ export class ShipperDetail extends PureComponent {
               )}
             </Modal.Body>
             <Modal.Footer>
-              <Button
-                variant="info"
-                onClick={
-                  this.state.data.status == 3
-                    ? this.activeAccount
-                    : this.updateStatus
-                }
-              >
+              <Button variant="info" onClick={this.updateStatus}>
                 Có
               </Button>
               <Button variant="dark" onClick={this.handleClose}>

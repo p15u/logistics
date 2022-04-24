@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Link } from "react-router-dom";
 
@@ -13,131 +13,12 @@ import Table from "../../components/table/Table";
 import Badge from "../../components/badge/Badge";
 
 import statusCards from "../../assets/JsonData/status-card-data.json";
-
-const chartOptions = {
-  series: [
-    {
-      name: "Online Customers",
-      data: [40, 70, 20, 90, 36, 80, 30, 91, 60],
-    },
-    {
-      name: "Store Customers",
-      data: [40, 30, 70, 80, 40, 16, 40, 20, 51, 10],
-    },
-  ],
-  options: {
-    color: ["#6ab04c", "#2980b9"],
-    chart: {
-      background: "transparent",
-    },
-    dataLabels: {
-      enabled: false,
-    },
-    stroke: {
-      curve: "smooth",
-    },
-    xaxis: {
-      categories: [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-      ],
-    },
-    legend: {
-      position: "top",
-    },
-    grid: {
-      show: false,
-    },
-  },
-};
-
+import Cookies from "js-cookie";
+import CustomerService from "../../service/Service/CustomerService";
+import ShipperService from "../../service/Service/ShipperService";
+import HistoryService from "../../service/Service/HistoryService";
 const topCustomers = {
-  head: ["user", "total orders", "total spending"],
-  body: [
-    {
-      username: "john doe",
-      order: "490",
-      price: "$15,870",
-    },
-    {
-      username: "frank iva",
-      order: "250",
-      price: "$12,251",
-    },
-    {
-      username: "anthony baker",
-      order: "120",
-      price: "$10,840",
-    },
-    {
-      username: "frank iva",
-      order: "110",
-      price: "$9,251",
-    },
-    {
-      username: "anthony baker",
-      order: "80",
-      price: "$8,840",
-    },
-  ],
-};
-
-const renderCusomerHead = (item, index) => <th key={index}>{item}</th>;
-
-const renderCusomerBody = (item, index) => (
-  <tr key={index}>
-    <td>{item.username}</td>
-    <td>{item.order}</td>
-    <td>{item.price}</td>
-  </tr>
-);
-
-const latestOrders = {
-  header: ["order id", "user", "total price", "date", "status"],
-  body: [
-    {
-      id: "#OD1711",
-      user: "john doe",
-      date: "17 Jun 2021",
-      price: "$900",
-      status: "shipping",
-    },
-    {
-      id: "#OD1712",
-      user: "frank iva",
-      date: "1 Jun 2021",
-      price: "$400",
-      status: "paid",
-    },
-    {
-      id: "#OD1713",
-      user: "anthony baker",
-      date: "27 Jun 2021",
-      price: "$200",
-      status: "pending",
-    },
-    {
-      id: "#OD1712",
-      user: "frank iva",
-      date: "1 Jun 2021",
-      price: "$400",
-      status: "paid",
-    },
-    {
-      id: "#OD1713",
-      user: "anthony baker",
-      date: "27 Jun 2021",
-      price: "$200",
-      status: "refund",
-    },
-  ],
+  head: ["Tên khách hàng", "Số điện thoại", "Trạng thái"],
 };
 
 const orderStatus = {
@@ -147,41 +28,136 @@ const orderStatus = {
   refund: "danger",
 };
 
-const renderOrderHead = (item, index) => <th key={index}>{item}</th>;
-
-const renderOrderBody = (item, index) => (
-  <tr key={index}>
-    <td>{item.id}</td>
-    <td>{item.user}</td>
-    <td>{item.price}</td>
-    <td>{item.date}</td>
-    <td>
-      <Badge type={orderStatus[item.status]} content={item.status} />
-    </td>
-  </tr>
-);
-
 const DashboardCompany = () => {
-  const themeReducer = useSelector((state) => state.ThemeReducer.mode);
+  const [dataShip, setDataShip] = useState([]);
+  const [dataUser, setDataU] = useState([]);
+  const [dataShipper, setDataS] = useState([]);
+  const [dataCompany, setDataC] = useState([]);
+  const [dataCustomer, setDataCustomer] = useState([]);
+  const [dataListCom, setDataListCom] = useState([]);
+  const [dataListCancel, setDataListCancel] = useState([]);
+  useEffect(() => {
+    const idUser = Cookies.get("id");
 
+    CustomerService.getCustomerCompany(idUser).then((response) => {
+      setDataU(response.data.length);
+    });
+    ShipperService.getShipperCompany(idUser).then((response) => {
+      setDataS(response.data.length);
+    });
+    CustomerService.getCustomerCompany(idUser).then((response) => {
+      if (response.data.length >= 6) {
+        const lastX = 5;
+        const db = response.data.filter(
+          (val, index, arr) => index > arr.length - lastX - 1
+        );
+        setDataCustomer(db);
+      } else {
+        setDataCustomer(response.data);
+      }
+    });
+    ShipperService.getShipperCompany(idUser).then((response) => {
+      if (response.data.length >= 6) {
+        const lastX = 5;
+        const db = response.data.filter(
+          (val, index, arr) => index > arr.length - lastX - 1
+        );
+        setDataShip(db);
+      } else {
+        setDataShip(response.data);
+      }
+    });
+    HistoryService.getOrderByTimeCompany(5, idUser).then((response) => {
+      setDataListCom(response.data);
+    });
+    HistoryService.getOrderByTimeCompany(6, idUser).then((response) => {
+      setDataListCancel(response.data);
+    });
+  }, []);
+  const themeReducer = useSelector((state) => state.ThemeReducer.mode);
+  const chartOptions = {
+    series: [
+      {
+        name: "Đã giao",
+        data: dataListCom,
+      },
+      {
+        name: "Đã hủy",
+        data: dataListCancel,
+      },
+    ],
+    options: {
+      color: ["#6ab04c", "#2980b9"],
+      chart: {
+        background: "transparent",
+      },
+      dataLabels: {
+        enabled: false,
+      },
+      stroke: {
+        curve: "smooth",
+      },
+      xaxis: {
+        categories: [
+          "Tháng 1",
+          "Tháng 2",
+          "Tháng 3",
+          "Tháng 4",
+          "Tháng 5",
+          "Tháng 6",
+          "Tháng 7",
+          "Tháng 8",
+          "Tháng 9",
+          "Tháng 10",
+          "Tháng 11",
+          "Tháng 12",
+        ],
+      },
+      legend: {
+        position: "top",
+      },
+      grid: {
+        show: false,
+      },
+    },
+  };
   return (
     <div>
-      <h2 className="page-header">Company</h2>
+      <h2 className="page-header">Trang chủ</h2>
       <div className="row">
-        <div className="col-6">
-          <div className="row">
-            {statusCards.map((item, index) => (
-              <div className="col-6" key={index}>
-                <StatusCard
-                  icon={item.icon}
-                  count={item.count}
-                  title={item.title}
-                />
-              </div>
-            ))}
+        <div className="col-3">
+          <div className="">
+            {/* <div className="col-6" key={1}>
+              <StatusCard
+                icon="bx bx-user"
+                count={dataUser + dataShipper + dataCompany}
+                title="Tổng số người dùng"
+              />
+            </div> */}
+            <div className="" key={2}>
+              <StatusCard
+                icon="bx bx-user"
+                count={dataUser}
+                title="Tổng số khách hàng"
+              />
+            </div>
+            <div className="" key={3}>
+              <StatusCard
+                icon="bx bx-user"
+                count={dataShipper}
+                title="Tổng số người giao hàng"
+              />
+            </div>
+            {/* <div className="col-6" key={4}>
+              <StatusCard
+                icon="bx bx-user"
+                count={dataCompany}
+                title="tổng số doanh nghiệp"
+              />
+            </div> */}
           </div>
         </div>
-        <div className="col-6">
+        <div className="col-9">
           <div className="card full-height">
             {/* chart */}
             <Chart
@@ -202,39 +178,110 @@ const DashboardCompany = () => {
             />
           </div>
         </div>
-        <div className="col-4">
-          <div className="card">
-            <div className="card__header">
-              <h3>top customers</h3>
+        <div className="col-5">
+          <div className="card ht">
+            <div className="card__header ">
+              <span style={{ fontSize: 20, fontWeight: "bold" }}>
+                Khách hàng
+              </span>
+              <Link to={"/company/customers"} title="Nhấn để hiển thị thông tin">
+                <span
+                  style={{ fontSize: 14, float: "right", cursor: "pointer" }}
+                >
+                  Tất cả<i className="bx bx-chevrons-right"></i>{" "}
+                </span>
+              </Link>
             </div>
             <div className="card__body">
-              <Table
-                headData={topCustomers.head}
-                renderHead={(item, index) => renderCusomerHead(item, index)}
-                bodyData={topCustomers.body}
-                renderBody={(item, index) => renderCusomerBody(item, index)}
-              />
-            </div>
-            <div className="card__footer">
-              <Link to="/">view all</Link>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Tên</th>
+                    <th>Số Điện Thoại</th>
+                    <th>Trạng Thái</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {dataCustomer.map((item) => {
+                    return (
+                      <tr key={item.idUser}>
+                        <td>{item.name}</td>
+                        <td>{item.phone}</td>
+
+                        <td>
+                          {item.status === 0 ? (
+                            <button className="badge badge-danger">
+                              Ngưng hoạt động
+                            </button>
+                          ) : (
+                            <button className="badge badge-success">
+                              {" "}
+                              Hoạt động
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+              {/* <Table
+                                headData={topCustomers.head}
+                                renderHead={(item, index) => renderCusomerHead(item, index)}
+                                bodyData={topCustomers.}
+                                renderBody={(item, index) => renderCusomerBody(item, index)}
+                            /> */}
             </div>
           </div>
         </div>
-        <div className="col-8">
-          <div className="card">
+        <div className="col-7">
+          <div className="card ht">
             <div className="card__header">
-              <h3>latest orders</h3>
+              <span style={{ fontSize: 20, fontWeight: "bold" }}>
+                Người giao hàng
+              </span>
+              <Link to={"/company/shipper"} title="Nhấn để hiển thị thông tin">
+                <span
+                  style={{ fontSize: 14, float: "right", cursor: "pointer" }}
+                >
+                  Tất cả<i className="bx bx-chevrons-right"></i>{" "}
+                </span>
+              </Link>
             </div>
             <div className="card__body">
-              <Table
-                headData={latestOrders.header}
-                renderHead={(item, index) => renderOrderHead(item, index)}
-                bodyData={latestOrders.body}
-                renderBody={(item, index) => renderOrderBody(item, index)}
-              />
-            </div>
-            <div className="card__footer">
-              <Link to="/">view all</Link>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Tên</th>
+                    <th>Số Điện Thoại</th>
+                    <th>Email</th>
+                    <th>Trạng Thái</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {dataShip.map((item) => {
+                    return (
+                      <tr key={item.idUser}>
+                        <td>{item.name}</td>
+                        <td>{item.phone}</td>
+                        <td>{item.emailUser}</td>
+                        <td>
+                          {item.status === 0 ? (
+                            <button className="badge badge-danger">
+                              Ngưng hoạt động
+                            </button>
+                          ) : (
+                            <button className="badge badge-success">
+                              {" "}
+                              Hoạt động
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
@@ -242,5 +289,6 @@ const DashboardCompany = () => {
     </div>
   );
 };
+
 
 export default DashboardCompany;

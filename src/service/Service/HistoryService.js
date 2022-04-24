@@ -7,5 +7,8 @@ class HistoryService {
   getOrderByTimeCancel() {
     return axios.get(`${HOST}/history/getOrderByTimeCancel`);
   }
+  getOrderByTimeCompany(status, idUser) {
+    return axios.get(`${HOST}/history/getOrderByTimeCompany?status=` + status + `&idUser=` + idUser);
+  }
 }
 export default new HistoryService();

@@ -10,5 +10,8 @@ class CompanyService {
   getCompanyById(id) {
     return axios.get(`${HOST}/company/getCompanyById?id=` + id);
   }
+  updateGiayPhep(data) {
+    return axios.post(`${HOST}/company/updateGiayPhep`, data);
+  }
 }
 export default new CompanyService();

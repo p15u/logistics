@@ -8,12 +8,10 @@ import Dropdown from "../dropdown/Dropdown";
 
 import ThemeMenu from "../thememenu/ThemeMenu";
 
-import notifications from "../../assets/JsonData/notification.json";
 import user_menu from "../../assets/JsonData/user_menus_admin.json";
 import company_menu from "../../assets/JsonData/user_menus_company.json";
 import SearchBar from "../search/search";
 import Cookies from "js-cookie";
-import HOST from "../../service/API/Host";
 
 const renderNotificationItem = (item, index) => (
   <div className="notification-item" key={index}>
@@ -31,7 +29,7 @@ const renderUserToggle = (path) => (
   </div>
 );
 const clickDropDown = (e) => {
-  if (e.target.innerText === "Logout") {
+  if (e.target.innerText === "Đăng xuất") {
     Cookies.remove("name");
     Cookies.remove("id");
     Cookies.remove("isLogged");
@@ -58,7 +56,7 @@ const renderUserMenu = (item, index) => (
 const Topnav = () => {
   const current_menu =
     Cookies.get("role") === "__cp" ? company_menu : user_menu;
-  const path = `${HOST}/user/getImg?filename=${Cookies.get("avatar")}`;
+  const path = `https://scontent.fsgn5-13.fna.fbcdn.net/v/t1.6435-9/119990267_1507051709467988_8980319581349841457_n.jpg?_nc_cat=101&ccb=1-5&_nc_sid=174925&_nc_ohc=LrA-yn1gU9AAX8RKbbi&_nc_ht=scontent.fsgn5-13.fna&oh=00_AT8n3zp9EAC5J99yJiZXmPJBV6PVt9wIcqhPquZ32PgBoA&oe=627A380B`;
   return (
     <div className="topnav">
       <div>

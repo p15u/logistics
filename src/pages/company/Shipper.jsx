@@ -1,63 +1,30 @@
 import React, { useState, useEffect, PureComponent, Component } from "react";
-
+import paginationFactory from "react-bootstrap-table2-paginator";
 import ShipperService from "../../service/Service/ShipperService";
 import CustomerService from "../../service/Service/CustomerService";
 import CompanyService from "../../service/Service/CompanyService";
+import active from "../../assets/images/active.png";
+import inactive from "../../assets/images/inactive.jpg";
+import waiticon from "../../assets/images/wait.png";
+import off from "../../assets/images/off.png";
 import "../css_pages/switch.css";
 import { Row, Col } from "react-bootstrap";
-import ReactPaginate from "react-paginate";
 import Cookies from "js-cookie";
-import { useHistory } from "react-router-dom";
-export class ShipperCompany extends Component {
+import BootstrapTable from "react-bootstrap-table-next";
+import filterFactory, {
+  textFilter,
+  selectFilter,
+  numberFilter,
+} from "react-bootstrap-table2-filter";
+import add from "../../assets/images/add.png";
+import { Link } from "react-router-dom";
+
+export class ShipperCompany extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      offset: 0,
       tableData: [],
-      orgtableData: [],
-      perPage: 10,
-      currentPage: 0,
-      data: [],
-      value: "",
-      tableFilter: [],
     };
-    this.handlePageClick = this.handlePageClick.bind(this);
-    this.routeChange = this.routeChange.bind(this);
-  }
-  routeChange(item) {
-    let path = `/company/shipperdetail`;
-
-    this.props.history.push({
-      pathname: path,
-      state: { data: item.idUser },
-    });
-  }
-
-  handlePageClick = (e) => {
-    const selectedPage = e.selected;
-    const offset = selectedPage * this.state.perPage;
-
-    this.setState(
-      {
-        currentPage: selectedPage,
-        offset: offset,
-      },
-      () => {
-        this.getData();
-      }
-    );
-  };
-
-  loadMoreData() {
-    const data = this.state.orgtableData;
-
-    const slice = data.slice(
-      this.state.offset,
-      this.state.offset + this.state.perPage
-    );
-    this.setState({
-      tableData: slice,
-    });
   }
 
   componentDidMount() {
@@ -69,182 +36,285 @@ export class ShipperCompany extends Component {
   //Lấy Dữ Liệu
   getData() {
     ShipperService.getShipperCompany(Cookies.get("id")).then((res) => {
-      var slice = res.data.slice(
-        this.state.offset,
-        this.state.offset + this.state.perPage
-      );
       this.setState({
-        orgtableData: res.data,
-        tableData: slice,
-      });
-      this.setState({
-        tableFilter: [...this.state.tableData],
-        pageCount: Math.ceil(
-          this.state.orgtableData.length / this.state.perPage
-        ),
+        tableData: res.data,
       });
     });
   }
   //Cập nhật trạng thái
-  updateStatus = (item) => {
-    if (item.status === 0) {
-      item.status = 1;
-    } else {
-      item.status = 0;
-    }
-    CustomerService.updateStatus(item);
-    //axios.post(`${HOST}/user/changeStatus`, item);
-  };
-  filterData = (e) => {
-    if (e.target.value != "") {
-      this.setState({ value: e.target.value });
-      const filterTable = this.state.tableData.filter((o) =>
-        o.name.toLowerCase().includes(e.target.value.toLowerCase())
-      );
 
-      this.setState({
-        tableFilter: [...filterTable],
-      });
-      this.setState({
-        pageCount: Math.ceil(
-          this.state.tableFilter.length / this.state.perPage
-        ),
-      });
+  routeChange(item) {
+    let path = `/company/shipperdetail`;
+    console.log(item);
+    this.props.history.push({
+      pathname: path,
+      state: { data: item.idUser },
+    });
+  }
+  getStatus(stt) {
+    if (stt == 0) {
+      return (
+        <div>
+          <p>
+            <img
+              height={15}
+              width={15}
+              style={{ marginRight: 5, marginLeft: 20 }}
+              src={inactive}
+              alt="inactive"
+            />
+            Ngưng hoạt động
+          </p>
+        </div>
+      );
+    } else if (stt == 1) {
+      return (
+        <div>
+          <p>
+            <img
+              height={15}
+              width={15}
+              style={{ marginRight: 5, marginLeft: 20 }}
+              src={active}
+              alt="active"
+            />
+            Đang hoạt động
+          </p>
+        </div>
+      );
+    } else if (stt == 2) {
+      return (
+        <div>
+          <p>
+            <img
+              height={15}
+              width={15}
+              style={{ marginRight: 5, marginLeft: 20 }}
+              src={off}
+              alt="inactive"
+            />
+            Đang tắt
+          </p>
+        </div>
+      );
     } else {
-      this.setState({ value: e.target.value });
-      this.setState({
-        tableFilter: [...this.state.tableData],
-        pageCount: Math.ceil(
-          this.state.orgtableData.length / this.state.perPage
-        ),
-      });
+      return (
+        <div>
+          <p>
+            <img
+              height={15}
+              width={15}
+              style={{ marginRight: 5, marginLeft: 20 }}
+              src={waiticon}
+              alt="wait"
+            />
+            Đang chờ duyệt
+          </p>
+        </div>
+      );
     }
-  };
+  }
+
   render() {
+    const options = {
+      // pageStartIndex: 0,
+      sizePerPage: 10,
+      hideSizePerPage: true,
+      hidePageListOnlyOnePage: true,
+    };
+    const selectOptionsArr = [
+      {
+        value: 0,
+        label: "Ngưng hoạt động",
+      },
+      {
+        value: 1,
+        label: "Đang hoạt động",
+      },
+      {
+        value: 2,
+        label: "Đang tắt",
+      },
+      {
+        value: 3,
+        label: "Đang chờ duyệt",
+      },
+    ];
+    const tableRowEvents = {
+      onClick: (e, row, rowIndex) => {
+        let path = `/company/shipperdetail`;
+
+        this.props.history.push({
+          pathname: path,
+          state: { data: row.idUser },
+        });
+      },
+      onMouseEnter: (e, row, rowIndex) => {
+        console.log(`enter on row with index: ${rowIndex}`);
+      },
+    };
+    const columns = [
+      {
+        dataField: "idUser",
+        text: "Mã số",
+        sort: true,
+        headerStyle: (colum, colIndex) => {
+          return {
+            width: "80px",
+          };
+        },
+
+        style: {
+          width: "80px",
+        },
+      },
+      {
+        dataField: "name",
+        text: "Tên",
+        sort: true,
+        style: {
+          width: "200px",
+        },
+        filter: textFilter({
+          style: {
+            height: "35px",
+            borderRadius: "10px",
+            borderWidth: "1px",
+            width: "170px",
+          },
+          placeholder: "Nhập tên...",
+          onClick: (e) => console.log(e),
+        }),
+        headerStyle: (colum, colIndex) => {
+          return { width: "200px", textAlign: "center" };
+        },
+      },
+      {
+        dataField: "phone",
+        text: "SDT",
+        style: {
+          width: "120px",
+        },
+        headerStyle: (colum, colIndex) => {
+          return { width: "120px", textAlign: "center" };
+        },
+      },
+      {
+        dataField: "emailUser",
+        text: "Email",
+        style: {
+          width: "180px",
+        },
+        headerStyle: (colum, colIndex) => {
+          return { width: "180px", textAlign: "center" };
+        },
+      },
+      {
+        dataField: "address",
+        text: "Địa chỉ \n",
+        align: "left",
+        style: {
+          width: "300px",
+        },
+        headerStyle: (colum, colIndex) => {
+          return { width: "300px", textAlign: "center" };
+        },
+        filter: textFilter({
+          style: {
+            height: "35px",
+            borderRadius: "10px",
+            borderWidth: "1px",
+            width: "270px",
+          },
+          placeholder: "Nhập địa chỉ...",
+          onClick: (e) => console.log(e),
+        }),
+      },
+
+      {
+        dataField: "sumOrder",
+        text: "Tổng đơn",
+        sort: true,
+        style: {
+          width: "70px",
+        },
+        headerStyle: (colum, colIndex) => {
+          return { width: "70px", textAlign: "center" };
+        },
+      },
+
+      {
+        dataField: "status",
+        text: "Trạng thái",
+        style: {
+          width: "200px",
+        },
+        align: "left",
+
+        headerStyle: (colum, colIndex) => {
+          return { width: "200px", textAlign: "center" };
+        },
+        filter: selectFilter({
+          options: () => selectOptionsArr,
+          style: {
+            height: "35px",
+            borderRadius: "10px",
+            borderWidth: "1px",
+            width: "160px",
+          },
+
+          placeholder: "Chọn trạng thái",
+          className: "test-classname",
+          datamycustomattr: "datamycustomattr",
+        }),
+
+        formatter: (cell, row, rowIndex, extraData) => (
+          <div>{this.getStatus(row.status)}</div>
+        ),
+      },
+    ];
     return (
       <div className="row">
-        <div className="col-12">
-          <div className="card">
-            <div className="card__body">
-              <Row>
-                <Col>
-                  <h2>Danh sách tài xế </h2>
-                </Col>
-                <Col style={{ display: "flex", justifyContent: "flex-end" }}>
-                  <input
-                    className="searchTable"
-                    type="text"
-                    placeholder="Nhập tên..."
-                    value={this.state.value}
-                    onChange={this.filterData}
+        <div className="card">
+          <div className="card__body">
+            <Row>
+              <Col>
+                <h5>Danh sách tài xế </h5>
+              </Col>
+              <Col style={{ display: "flex", justifyContent: "flex-end" }}>
+                <Link to={"/company/addshipper"}>
+                  <img
+                    className=" img-lg rounded-0"
+                    width="30px"
+                    height="30px"
+                    src={add}
+                    alt="customer"
                   />
-                </Col>
-              </Row>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Mã số</th>
-                    <th>Hình đại diện</th>
-                    <th>Tên</th>
-                    <th>Số Điện Thoại</th>
-                    <th>Email</th>
-                    <th>Địa Chỉ</th>
-                    <th>Chứng minh nhân dân</th>
-                    <th>Cân nặng xe</th>
-                    <th>Giấy phép lái xe</th>
-                    <th>Biển số xe</th>
-                    <th>Trạng Thái</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {this.state.tableFilter.map((item) => {
-                    return (
-                      <tr
-                        key={item.idUser}
-                        onClick={() => {
-                          this.routeChange(item);
-                        }}
-                      >
-                        <td>{item.idUser}</td>
-                        <td
-                          style={{
-                            textAlign: "center",
-                          }}
-                        >
-                          <img
-                            className=" img-lg rounded-0"
-                            // width="100px"
-                            height="100px"
-                            src={`data:image/png;base64,${item.avatar}`}
-                            alt="avatar"
-                          />
-                        </td>
-                        <td>{item.name}</td>
-                        <td>{item.phone}</td>
-                        <td>{item.emailUser}</td>
-                        <td>
-                          {item.address}, {item.wards}, {item.district},{" "}
-                          {item.province}
-                        </td>
-                        <td>{item.cmtCode}</td>
-                        <td>{item.weightCar}</td>
-                        <td
-                          style={{
-                            textAlign: "center",
-                            alignContent: "center",
-                            alignSelf: "center",
-                            position: "absolute",
-                          }}
-                        >
-                          <img
-                            className=" img-lg rounded-0"
-                            // width="100px"
-                            height="100px"
-                            src={`data:image/png;base64,${item.licensePlates}`}
-                            alt="avatar"
-                          />
-                        </td>
-                        <td>{item.numberPlate}</td>
-                        <td>
-                          {item.status === 0 ? (
-                            <button
-                              className="badge badge-danger"
-                              onClick={() => this.updateStatus(item)}
-                            >
-                              Ngưng hoạt động
-                            </button>
-                          ) : (
-                            <button
-                              className="badge badge-success"
-                              onClick={() => this.updateStatus(item)}
-                            >
-                              Hoạt động
-                            </button>
-                          )}
-                        </td>
-                        <td></td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-              <div className="table__pagination">
-                <ReactPaginate
-                  className="pagination"
-                  previousLabel={"<"}
-                  nextLabel={">"}
-                  breakLabel={"..."}
-                  breakClassName={"break-me"}
-                  pageCount={this.state.pageCount}
-                  marginPagesDisplayed={2}
-                  pageRangeDisplayed={5}
-                  onPageChange={this.handlePageClick}
-                  containerClassName={"pagination"}
-                  subContainerClassName={"pages pagination"}
-                  activeClassName={"active"}
-                />
-              </div>
+                </Link>
+              </Col>
+            </Row>
+            <div
+              style={
+                {
+                  // position: "relative",
+                  // marginLeft: "10px",
+                  // height: "56px",
+                  // width: "1110px",
+                  // overflow: "scroll",
+                  // marginBottom: "10px",
+                }
+              }
+            >
+              <BootstrapTable
+                keyField="idUser"
+                data={this.state.tableData}
+                columns={columns}
+                rowEvents={tableRowEvents}
+                filter={filterFactory()}
+                defaultPageSize={20}
+                pagination={paginationFactory(options)}
+                bordered={false}
+              />
             </div>
           </div>
         </div>
@@ -252,5 +322,4 @@ export class ShipperCompany extends Component {
     );
   }
 }
-
 export default ShipperCompany;

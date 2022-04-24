@@ -49,7 +49,9 @@ function CompanyRouter({ component: Component, ...rest }) {
             >
               <Sidebar {...props} />
               <div className="layout__content">
-                <Topnav />
+                <div className="layout__content-nav">
+                  <Topnav />
+                </div>
                 <div className="layout__content-main">
                   <Component {...props} />
                 </div>

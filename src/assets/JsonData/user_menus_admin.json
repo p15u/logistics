@@ -1,22 +1,13 @@
 [
   {
     "icon": "bx bx-user",
-    "content": "Profile",
+    "content": "Thông tin",
     "route": "/admin/profile"
   },
-  {
-    "icon": "bx bx-wallet-alt",
-    "content": "My Wallet",
-    "route": "/admin/"
-  },
-  {
-    "icon": "bx bx-cog",
-    "content": "Settings",
-    "route": "/admin/"
-  },
+
   {
     "icon": "bx bx-log-out-circle bx-rotate-180",
-    "content": "Logout",
+    "content": "Đăng xuất",
     "route": "/login"
   }
 ]

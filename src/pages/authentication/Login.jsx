@@ -13,15 +13,19 @@ const Login = (props) => {
   const [error, setError] = useState("");
   const [isCheck, setCheck] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
+  const [showAlert2, setShowAlert2] = useState(false);
   let history = useHistory();
 
   useEffect(() => {
     if (props.history.location.state !== undefined) {
       if (props.history.location.state.mess === "reset") {
         setShowAlert(true);
+      } else if (props.history.location.state.mess === "regis") {
+        setShowAlert2(true);
       }
       setTimeout(() => {
         setShowAlert(false);
+        setShowAlert2(false);
       }, 2000);
       props.history.location.state.mess = "";
     }
@@ -72,9 +76,11 @@ const Login = (props) => {
               <Form.Group className="mb-3" controlId="formBasicEmail">
                 <Form.Label>Tài khoản</Form.Label>
                 <Form.Control
+                  required
                   type="email"
                   placeholder="Tài khoản"
                   onChange={(e) => setEmail(e.target.value)}
+                  onFocus={(e) => setError("")}
                 />
                 <Form.Text className="text-muted"></Form.Text>
               </Form.Group>
@@ -82,38 +88,62 @@ const Login = (props) => {
               <Form.Group className="mb-3" controlId="formBasicPassword">
                 <Form.Label>Mật khẩu</Form.Label>
                 <Form.Control
+                  required
                   type="password"
                   placeholder="Mật khẩu"
                   onChange={(e) => setPassword(e.target.value)}
+                  onFocus={(e) => setError("")}
                 />
               </Form.Group>
               <Row></Row>
 
-              <div className="text-left">
-                <Form.Check
-                  className="reset1 ml-2"
-                  type="checkbox"
-                  label="Nhớ mật khẩu"
-                  onChange={(e) => {
-                    setCheck(e.target.checked);
+              <div
+                className="text-right"
+                style={{
+                  alignContent: "right",
+                  alignItems: "right",
+                  textAlign: "right",
+                  marginBottom: "10px",
+                }}
+              >
+                <a
+                  className="linkforget"
+                  style={{
+                    alignContent: "right",
+                    alignItems: "right",
+                    textAlign: "right",
                   }}
-                />
-                <a className="linkforget" href="/forgetpass">
+                  href="/forgetpass"
+                >
                   <small className="reset">Quên mật khẩu</small>
                 </a>
+              </div>
+              <div>
+                {error && (
+                  <Alert
+                    variant="danger"
+                    style={{
+                      width: "410px",
+                      height: "50px",
+                    }}
+                  >
+                    <p>{error}</p>
+                  </Alert>
+                )}
               </div>
               <div className="d-grid gap-2">
                 <Button variant="primary" size="lg" onClick={handleLogin}>
                   Đăng nhập
                 </Button>
               </div>
-              <div className="d-grid gap-2">
-                <Button variant="primary" size="lg" href="/signupcompany">
+              <div className="d-grid">
+                <Button
+                  style={{ marginTop: 15 }}
+                  size="lg"
+                  href="/signupcompany"
+                >
                   Đăng ký
                 </Button>
-              </div>
-              <div>
-                <h6 className="err">{error}</h6>
               </div>
 
               {/* <hr className='hrtag' /> */}
@@ -133,7 +163,17 @@ const Login = (props) => {
             variant="success"
             onAnimationEnd={() => setShowAlert(false)}
           >
-            Thay đổi mật khẩu thành công. Vui lòng đăng nhập lại
+            Thay đổi mật khẩu thành công.
+          </Alert>
+        )}
+        {showAlert2 && (
+          <Alert
+            className="alert-fail"
+            variant="success"
+            onAnimationEnd={() => setShowAlert(false)}
+          >
+            Đăng ký tài khoản thành công. Vui lòng chờ admin xác nhận để đăng
+            nhập.
           </Alert>
         )}
       </Container>

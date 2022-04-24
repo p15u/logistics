@@ -69,10 +69,20 @@ figure {
   display: inline;
   width: 75%;
 }
+.icont2 {
+  display: inline;
+  width: 60%;
+}
 
 .title {
   display: inline;
-  font-weight: 900;
+  font-weight: 700;
+  margin-right: 10px;
+  width: 22%;
+}
+.titlenew {
+  display: inline;
+  font-weight: 700;
   margin-right: 10px;
   width: 22%;
 }
@@ -85,10 +95,6 @@ figure {
 }
 .btn:hover {
   color: var(--txt-white);
-}
-
-.btn-cancel:hover {
-  color: var(--second-color);
 }
 
 .profile-button:hover {
@@ -136,7 +142,10 @@ input[type="file"] {
 .selectOption {
   padding: 10px 0px 10px 0px;
 }
-
+.labelName {
+  width: 170px;
+  color: var(--main-color);
+}
 @media screen and (max-width: 1600px) {
 }
 

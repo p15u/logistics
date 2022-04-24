@@ -15,7 +15,7 @@
 }
 
 .form-control {
-  width: 300px;
+  /* width: 300px; */
   height: 45px;
   background: #ffffff;
   border: 1px solid #000000;
@@ -75,4 +75,13 @@
   letter-spacing: 0.1em;
   margin-left: 100px;
   color: #8699da;
+}
+.imgBia {
+  position: absolute;
+  width: 670.55px;
+  height: 650.91px;
+  left: 46.81%;
+  right: 10.19%;
+  top: 1.17%;
+  bottom: 18.06%;
 }

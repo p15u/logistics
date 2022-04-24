@@ -4,16 +4,7 @@
     "route": "/company/dashboard",
     "icon": "bx bx-category-alt"
   },
-  {
-    "display_name": "Bài Đăng",
-    "route": "/company/categories",
-    "icon": "bx bx-list-ol"
-  },
-  {
-    "display_name": "Thống Kê",
-    "route": "/company/analytics",
-    "icon": "bx bx-bar-chart-alt"
-  },
+
   {
     "display_name": "Khách Hàng",
     "route": "/company/customers",
@@ -28,10 +19,5 @@
     "display_name": "Đơn Hàng",
     "route": "/company/order",
     "icon": "bx bx-package"
-  },
-  {
-    "display_name": "settings",
-    "route": "/company/settings",
-    "icon": "bx bx-cog"
   }
 ]

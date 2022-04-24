@@ -1,11 +1,12 @@
 .topnav {
-  padding: 30px;
+  padding: 20px;
   display: flex;
   justify-content: space-between;
   height: var(--topnav-height);
   background-color: var(--main-color);
-  position: relative;
+  position: fixed;
   z-index: 99;
+  width: 83%;
 }
 
 .topnav__search {
@@ -40,6 +41,7 @@
 
 .topnav__right-item ~ .topnav__right-item {
   margin-left: 30px;
+  margin-right: 20px;
 }
 
 .notification-item {

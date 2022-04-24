@@ -1,11 +1,12 @@
-.table-wrapper {
+/* .table-wrapper {
   overflow-y: auto;
-}
+} */
 
 table {
   width: 100%;
   min-width: 400px;
   border-spacing: 0;
+  margin-bottom: 3px !important;
 }
 
 thead {
@@ -21,6 +22,9 @@ td {
   text-transform: capitalize;
   padding: 8px 8px;
   font-size: 13px;
+  color: var(--txt-color);
+
+  border: none;
 }
 
 tr:nth-child(even) {
@@ -29,39 +33,61 @@ tr:nth-child(even) {
 
 tbody > tr:hover {
   background-color: var(--second-color);
-  color: var(--txt-white);
+  color: var(--txt-color);
 }
 
-.table__pagination {
-  display: flex;
-  width: 100%;
-  justify-content: flex-end;
-  align-items: center;
-  margin-top: 20px;
+.caret {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-left: 2px;
+  vertical-align: middle;
+  border-top: 4px dashed;
+  border-top: 4px solid \9;
+  border-right: 4px solid transparent;
+  border-left: 4px solid transparent;
 }
 
-.table__pagination-item ~ .table__pagination-item {
-  margin-left: 10px;
+.dropup .caret,
+.navbar-fixed-bottom .dropdown .caret {
+  border-top: 0;
+  border-bottom: 4px dashed;
+  border-bottom: 4px solid \9;
+  /* content: ""; */
+  z-index: 0 o !important;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  /* margin: -1px; */
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  z-index: 0;
+}
+thead,
+tbody tr {
+  display: table;
+  /* width: 2000px; */
+  table-layout: fixed;
+}
+thead {
+  width: calc(990px - 1em);
+  position: fixed;
+  top: 0px;
+  /* display: none; */
+  /* background-color: white; */
 }
 
-.table__pagination-item {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
+table thead {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  border: none;
+  z-index: 1;
 }
-
-.table__pagination-item.active,
-.table__pagination-item.active:hover {
-  background-color: var(--main-color);
-  color: var(--txt-white);
-  font-weight: 600;
-}
-
-.table__pagination-item:hover {
-  color: var(--txt-white);
-  background-color: var(--second-color);
+.table thead th {
+  vertical-align: top !important;
+  padding-top: 5 !important;
 }

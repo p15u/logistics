@@ -1,28 +1,17 @@
-import React, { PureComponent } from "react";
+import React, { useState, useEffect, PureComponent } from "react";
 import {
   LocationSearching,
   MailOutline,
   PermIdentity,
   PhoneAndroid,
 } from "@material-ui/icons";
-import "./css_pages/user.css";
+import "./../css_pages/user.css";
 import { Link } from "react-router-dom";
+import ProfileApi from "../../service/Service/profileService";
 import Cookies from "js-cookie";
-import OrderService from "../service/Service/OrderService";
-import ShipperService from "../service/Service/ShipperService.js";
-import CompanyService from "../service/Service/CompanyService";
+import OrderService from "../../service/Service/OrderService";
+import CustomerService from "../../service/Service/CustomerService";
 import { Row, Col } from "react-bootstrap";
-import BootstrapTable from "react-bootstrap-table-next";
-import active from "../assets/images/active.png";
-import inactive from "../assets/images/inactive.jpg";
-import waiticon from "../assets/images/wait.png";
-import off from "../assets/images/off.png";
-import filterFactory, {
-  textFilter,
-  selectFilter,
-  numberFilter,
-} from "react-bootstrap-table2-filter";
-
 import {
   Modal,
   Button,
@@ -31,36 +20,37 @@ import {
   Alert,
   Form,
 } from "react-bootstrap";
+import BootstrapTable from "react-bootstrap-table-next";
+import filterFactory, {
+  textFilter,
+  selectFilter,
+  numberFilter,
+} from "react-bootstrap-table2-filter";
 import paginationFactory from "react-bootstrap-table2-paginator";
-import CustomerService from "../service/Service/CustomerService";
-export class CompanyDetail extends PureComponent {
+export class CustomerDetail extends PureComponent {
   constructor(props) {
     super(props);
-    this.state = {
-      dataCompany: [],
-      data: {
-        name: "",
-        phone: "",
-        email: "",
-        address: "",
-        image: "",
-        status: 0,
-        idCompany: 0,
-        idUser: 0,
-        wards: "",
-        district: "",
-        province: "",
-        avatar: "",
-        masothue: "",
-        giayphepKD: "",
-        note: "",
-      },
-      idUser: this.props.location.state.data,
 
+    this.state = {
+      idUser: this.props.location.state.data,
       //Thong tin hang hoa
       dataInfo: [],
-      //Thong tin tai xe
-      dataShipper: [],
+      data: {
+        address: "",
+        avatar: "",
+        district: "",
+        emailUser: "",
+        idDistrict: 0,
+        idProvince: 0,
+        idUser: this.props.location.state.data,
+        idWards: 0,
+        name: "",
+        phone: "",
+        province: "",
+        status: 0,
+        wards: "",
+        note: "",
+      },
       show: false,
       show2: false,
       show3: false,
@@ -69,188 +59,21 @@ export class CompanyDetail extends PureComponent {
       mess: "",
     };
   }
+  componentDidMount() {
+    this.getData();
+  }
+
   handleClose = () => this.setState({ ...this.state, show: false });
   handleShow = () => this.setState({ ...this.state, show: true });
   handleClose2 = () => this.setState({ ...this.state, show2: false });
   handleShow2 = () => this.setState({ ...this.state, show2: true });
   handleClose3 = () => this.setState({ ...this.state, show3: false });
   handleShow3 = () => this.setState({ ...this.state, show3: true });
-
   handleClose4 = () =>
     this.setState({ ...this.state, show4: false, mess: "", note: "" });
   handleShow4 = () => {
     this.setState({ ...this.state, show4: true });
   };
-  componentDidMount() {
-    this.getData();
-  }
-
-  //Lấy Dữ Liệu
-  getData() {
-    console.log(this.state.idUser);
-    CompanyService.getCompanyById(this.state.idUser).then((res) => {
-      console.log(res.data);
-      this.setState({ data: res.data });
-    });
-
-    // OrderService.getOrder().then((res) => {
-    //   this.setState({
-    //     dataInfo: res.data,
-    //   });
-    // });
-
-    ShipperService.getShipperCompany(this.state.idUser).then((res) => {
-      this.setState({
-        dataShipper: res.data,
-      });
-    });
-  }
-  routeChangeShipper(item) {
-    let path = `/admin/shipperdetail`;
-    console.log(item);
-    this.props.history.push({
-      pathname: path,
-      state: { data: item.idUser },
-    });
-  }
-  getStatus(stt) {
-    if (stt == 0) {
-      return (
-        <div>
-          <p>
-            <img
-              height={15}
-              width={15}
-              style={{ marginRight: 5, marginLeft: 20 }}
-              src={inactive}
-              alt="inactive"
-            />
-            Ngưng hoạt động
-          </p>
-        </div>
-      );
-    } else if (stt == 1) {
-      return (
-        <div>
-          <p>
-            <img
-              height={15}
-              width={15}
-              style={{ marginRight: 5, marginLeft: 20 }}
-              src={active}
-              alt="active"
-            />
-            Đang hoạt động
-          </p>
-        </div>
-      );
-    } else if (stt == 2) {
-      return (
-        <div>
-          <p>
-            <img
-              height={15}
-              width={15}
-              style={{ marginRight: 5, marginLeft: 20 }}
-              src={off}
-              alt="inactive"
-            />
-            Đang tắt
-          </p>
-        </div>
-      );
-    } else {
-      return (
-        <div>
-          <p>
-            <img
-              height={15}
-              width={15}
-              style={{ marginRight: 5, marginLeft: 20 }}
-              src={waiticon}
-              alt="wait"
-            />
-            Đang chờ duyệt
-          </p>
-        </div>
-      );
-    }
-  }
-  getStatusBtn(stt) {
-    if (stt == 0) {
-      return (
-        <div>
-          <OverlayTrigger
-            placement="right"
-            delay={{ show: 250, hide: 400 }}
-            overlay={
-              <Tooltip id="button-tooltip" {...this.props}>
-                Click để mở tài khoản
-              </Tooltip>
-            }
-          >
-            <button onClick={this.handleShow} className="userUpdateButtonER">
-              Ngưng hoạt động
-            </button>
-          </OverlayTrigger>
-        </div>
-      );
-    } else if (stt == 1) {
-      return (
-        <div>
-          <OverlayTrigger
-            placement="right"
-            delay={{ show: 250, hide: 400 }}
-            overlay={
-              <Tooltip id="button-tooltip" {...this.props}>
-                Click để khóa tài khoản
-              </Tooltip>
-            }
-          >
-            <button onClick={this.handleShow4} className="userUpdateButtonSS">
-              Đang hoạt động
-            </button>
-          </OverlayTrigger>
-        </div>
-      );
-    } else if (stt == 2) {
-      return (
-        <div>
-          <OverlayTrigger
-            placement="right"
-            delay={{ show: 250, hide: 400 }}
-            overlay={
-              <Tooltip id="button-tooltip" {...this.props}>
-                Click để khóa tài khoản
-              </Tooltip>
-            }
-          >
-            <button onClick={this.handleShow4} className="userUpdateButtonER">
-              Đang tắt
-            </button>
-          </OverlayTrigger>
-        </div>
-      );
-    } else {
-      return (
-        <div>
-          <OverlayTrigger
-            placement="right"
-            delay={{ show: 250, hide: 400 }}
-            overlay={
-              <Tooltip id="button-tooltip" {...this.props}>
-                Click để duyệt tài khoản
-              </Tooltip>
-            }
-          >
-            <button onClick={this.handleShow} className="userUpdateButtonWait">
-              Đang chờ duyệt
-            </button>
-          </OverlayTrigger>
-        </div>
-      );
-    }
-  }
   //Cập nhật trạng thái
   updateStatus = async () => {
     var data = this.state.data;
@@ -297,6 +120,7 @@ export class CompanyDetail extends PureComponent {
     var data = this.state.data;
     data.status = 1;
     await CustomerService.activeAccount(data).then((res) => {
+      console.log(res.data + "????????????????????????/");
       if (res.data == 1) {
         this.handleShow2();
         window.setTimeout(() => {
@@ -314,20 +138,45 @@ export class CompanyDetail extends PureComponent {
     this.handleClose();
     this.handleClose4();
   };
-  render() {
-    const tableRowEvents = {
-      onClick: (e, row, rowIndex) => {
-        let path = `/admin/shipperdetail`;
 
-        this.props.history.push({
-          pathname: path,
-          state: { data: row.idUser },
-        });
-      },
-    };
+  //Lấy Dữ Liệu
+  async getData() {
+    await CustomerService.getUserById(this.state.idUser).then((res) => {
+      this.setState({ data: res.data });
+    });
+    await OrderService.getOrderByIdUser(this.state.idUser).then((res) => {
+      this.setState({
+        dataInfo: res.data,
+      });
+      console.log(res.data);
+    });
+  }
+  getStatus(status) {
+    switch (status) {
+      case 0:
+        return <span className="stt3">Chưa có shipper nhận</span>;
+      case 1:
+        return <span className="stt1">Shipper vừa nhận đơn hàng</span>;
+      case 2:
+        return <span className="stt1">Đang lấy hàng</span>;
+      case 3:
+        <span className="stt1">Đã nhận được hàng</span>;
+      case 4:
+        return <span className="stt1">Đang giao hàng</span>;
+      case 5:
+        return <span className="stt2">Đã giao hàng thành công</span>;
+      case 6:
+        return <span className="stt3">Đơn hàng đã hủy</span>;
+      case 7:
+        return <span className="stt4">Giao hàng không thành công</span>;
+      case 8:
+        return <span className="stt1">Lưu kho</span>;
+    }
+  }
+  render() {
     const columns = [
       {
-        dataField: "idUser",
+        dataField: "idInfo",
         text: "Mã số",
         sort: true,
         headerStyle: (colum, colIndex) => {
@@ -340,9 +189,10 @@ export class CompanyDetail extends PureComponent {
           width: "80px",
         },
       },
+
       {
-        dataField: "name",
-        text: "Tên",
+        dataField: "nameProduct",
+        text: "Tên sản phẩm",
         sort: true,
         style: {
           width: "200px",
@@ -352,7 +202,7 @@ export class CompanyDetail extends PureComponent {
             height: "35px",
             borderRadius: "10px",
             borderWidth: "1px",
-            width: "170px",
+            width: "150px",
           },
           placeholder: "Nhập tên...",
           onClick: (e) => console.log(e),
@@ -361,34 +211,79 @@ export class CompanyDetail extends PureComponent {
           return { width: "200px", textAlign: "center" };
         },
       },
-
       {
-        dataField: "sumOrder",
-        text: "Tổng đơn",
+        dataField: "kilomet",
+        text: "Khoảng cách",
+
         sort: true,
         style: {
-          width: "70px",
+          width: "120px",
+        },
+
+        headerStyle: (colum, colIndex) => {
+          return { width: "120px", textAlign: "center" };
+        },
+      },
+
+      {
+        dataField: "phiShip",
+        text: "Phí ship ",
+        sort: true,
+        style: {
+          width: "100px",
         },
         headerStyle: (colum, colIndex) => {
-          return { width: "70px", textAlign: "center" };
+          return { width: "100px", textAlign: "center" };
         },
+      },
+      {
+        dataField: "priceProduct",
+        text: "Thu hộ ",
+        sort: true,
+        style: {
+          width: "100px",
+        },
+        headerStyle: (colum, colIndex) => {
+          return { width: "100px", textAlign: "center" };
+        },
+      },
+      {
+        dataField: "nameShipper",
+        text: "Shipper nhận đơn",
+        sort: true,
+        style: {
+          width: "210px",
+        },
+        headerStyle: (colum, colIndex) => {
+          return { width: "210px", textAlign: "center" };
+        },
+        formatter: (cell, row, rowIndex, extraData) => (
+          <div>
+            {row.nameShipper == null ? (
+              <div>
+                <p>Chưa có shipper nhận</p>
+              </div>
+            ) : (
+              <div>
+                <p>{row.nameShipper}</p>
+              </div>
+            )}
+          </div>
+        ),
       },
 
       {
         dataField: "status",
         text: "Trạng thái",
         style: {
-          width: "200px",
+          width: "248px",
         },
-        align: "center",
-
         headerStyle: (colum, colIndex) => {
-          return { width: "200px", textAlign: "center" };
+          return { width: "248px", textAlign: "center" };
         },
 
-        formatter: (cell, row, rowIndex, extraData) => (
-          <div>{this.getStatus(row.status)}</div>
-        ),
+        formatter: (cell, row, rowIndex, extraData) =>
+          this.getStatus(row.statusOrder),
       },
     ];
     const options = {
@@ -402,59 +297,57 @@ export class CompanyDetail extends PureComponent {
         <div className="card">
           <div className="card__body">
             <Row>
-              <Col style={{ marginLeft: "10px" }}>
+              <Col>
                 <h5>
                   <a
                     style={{
                       textDecoration: "none",
                       color: `var(--text-color)`,
                     }}
-                    href="/admin/company"
+                    href="/company/shipper"
                   >
-                    Danh sách doanh nghiệp
+                    Danh sách khách hàng
                   </a>
                   {">"} Thông tin chi tiết
                 </h5>
               </Col>
             </Row>
+
             <div className="userContainer">
-              <div className="userShowLeft">
-                <div className="userShowTop">
+              <div className="userShowLeft" style={{ textAlign: "center" }}>
+                <div className="userShowTop" style={{ alignItems: "center" }}>
                   <img
+                    style={{ alignSelf: "center" }}
+                    className="imageAvatar"
                     src={`data:image/png;base64,${this.state.data.avatar}`}
                     alt="avatar"
-                    className="imageAvatar"
                   />
                 </div>
                 <div className="userShowTopTitle">
-                  <span className="userShowUsername">
+                  <span
+                    className="userShowUsername"
+                    style={{
+                      textAlign: "center",
+                      marginTop: "5px",
+                      fontSize: 18,
+                    }}
+                  >
                     {this.state.data.name}
                   </span>
                   <span className="userShowUserTitle">
-                    <i>
-                      <b>Mã tài khoản : #{this.state.data.idUser} </b>
-                    </i>
+                    Mã Khách Hàng : {this.state.data.idUser}
                   </span>
-                </div>
-
-                <div className="userUpdateRight">
-                  <div
-                    className="userUpdateRight"
-                    style={{ textDecoration: "none", color: "white" }}
-                  >
-                    {this.getStatusBtn(this.state.data.status)}
-                  </div>
                 </div>
               </div>
               <div className="userShow">
-                <span className="userShowTitle">Chi Tiết Doanh Nghiệp</span>
+                <span className="title">Chi Tiết Tài Khoản</span>
                 <div className="userShowInfo">
                   <PermIdentity className="userShowIcon" />
-
                   <span className="userShowInfoTitle">
                     {this.state.data.name}
                   </span>
                 </div>
+
                 <div className="userShowInfo">
                   <PhoneAndroid className="userShowIcon" />
                   <span className="userShowInfoTitle">
@@ -470,60 +363,58 @@ export class CompanyDetail extends PureComponent {
                 <div className="userShowInfo">
                   <LocationSearching className="userShowIcon" />
                   <span className="userShowInfoTitle">
-                    {this.state.data.address +
-                      ", " +
-                      this.state.data.wards +
-                      ", " +
-                      this.state.data.district +
-                      ", " +
-                      this.state.data.province}
+                    {this.state.data.address}
                   </span>
                 </div>
-              </div>
-              <div className="userShow">
-                <span className="userShowTitle">Chi Tiết Tài Khoản</span>
                 <div className="userShowInfo">
-                  <span className="userShowUsername">ID : </span>
+                  <span>
+                    <i
+                      class="bx bx-spreadsheet"
+                      style={{ marginRight: 10 }}
+                    ></i>
+                    <b>Tổng đơn hàng:</b>
+                  </span>
                   <span className="userShowInfoTitle">
-                    {this.state.data.idCompany}
+                    <b> {this.state.dataInfo.length}</b>
                   </span>
                 </div>
                 <div className="userShowInfo">
-                  <span className="userShowUsername">Mã Số Thuế : </span>
+                  <span>
+                    <i
+                      class="bx bx-check-circle"
+                      style={{ marginRight: 10 }}
+                    ></i>
+                    <b>Tổng đơn hàng giao thành công:</b>
+                  </span>
                   <span className="userShowInfoTitle">
-                    {this.state.data.masothue}
+                    <b>
+                      {
+                        this.state.dataInfo.filter((x) => x.statusOrder == 5)
+                          .length
+                      }
+                    </b>
                   </span>
-                </div>
-                <div className="userShowInfo">
-                  <span className="userShowUsername">Giấy Phép KD : </span>
-                  <div className="userShowTop">
-                    <img
-                      src={`data:image/png;base64,${this.state.data.giayphepKD}`}
-                      alt="Giấy phép kinh doanh"
-                      className="img-lg rounded-0"
-                      // width="130px"
-                      height="180px"
-                    />
-                  </div>
                 </div>
               </div>
             </div>
           </div>
+
           <div>
             <div className="card">
-              <div>
-                <h6 className="title">Danh sách đơn hàng:</h6>
+              <div className="ttkh" style={{ marginBottom: "-20px" }}>
+                <h5 style={{ padding: "5px" }}>Danh sách đơn hàng</h5>
               </div>
-              <BootstrapTable
-                keyField="idUser"
-                data={this.state.dataShipper}
-                columns={columns}
-                filter={filterFactory()}
-                defaultPageSize={10}
-                rowEvents={tableRowEvents}
-                pagination={paginationFactory(options)}
-                bordered={false}
-              />
+              <div>
+                <BootstrapTable
+                  keyField="idUser"
+                  data={this.state.dataInfo}
+                  columns={columns}
+                  filter={filterFactory()}
+                  defaultPageSize={10}
+                  pagination={paginationFactory(options)}
+                  bordered={false}
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -639,4 +530,4 @@ export class CompanyDetail extends PureComponent {
   }
 }
 
-export default CompanyDetail;
+export default CustomerDetail;

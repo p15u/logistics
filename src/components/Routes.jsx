@@ -30,6 +30,10 @@ import ProfileCompany from "../pages/company/profile/ProfileCompany";
 import EditProfileCompany from "../pages/company/profile/EditProfileCompany";
 import OrderCompany from "../pages/company/order/OrderList";
 import OrderDetail from "../pages/company/order/orderDetail";
+import AddShipper from "../pages/company/AddShipper";
+import CompanyDetailCompany from "../pages/company/CompanyDetail";
+import CustomerDetailCompany from "../pages/company/CustomerDetail";
+import ShipperDetailCompany from "../pages/company/ShipperDetail";
 // import authentication
 import Login from "../pages/authentication/Login";
 import ForgetPass from "../pages/authentication/ForgetPW";
@@ -59,7 +63,7 @@ const Routes = () => {
       <AdminRoute path="/admin/news" component={News} />
       <AdminRoute path="/admin/newsupdate/:id" component={NewsEdit} />
       <AdminRoute path="/admin/newsdetail/:id" component={NewsDetail} />
-      <AdminRoute path="/changepassword" component={ChangePassword} />
+      <AdminRoute path="/admin/changepassword" component={ChangePassword} />
 
       <AdminRoute path="/admin/addNews" component={AddNews} />
 
@@ -68,13 +72,20 @@ const Routes = () => {
       <CompanyRoute path="/company/customers" component={CustomersCompany} />
       <CompanyRoute path="/company/shipper" component={ShipperCompany} />
       <CompanyRoute path="/company/profile" component={ProfileCompany} />
-      <CompanyRoute path="/company/customerdetail" component={CustomerDetail} />
-      <CompanyRoute path="/company/shipperdetail" component={ShipperDetail} />
+      <CompanyRoute
+        path="/company/customerdetail"
+        component={CustomerDetailCompany}
+      />
+      <CompanyRoute
+        path="/company/shipperdetail"
+        component={ShipperDetailCompany}
+      />
+      <CompanyRoute path="/company/addshipper" component={AddShipper} />
       <CompanyRoute
         path="/company/editprofile"
         component={EditProfileCompany}
       />
-      <CompanyRoute path="/changepassword" component={ChangePassword} />
+      <CompanyRoute path="/company/changepassword" component={ChangePassword} />
       <CompanyRoute path="/company/order" component={OrderCompany} />
       <CompanyRoute path="/company/orderdetail" component={OrderDetail} />
 

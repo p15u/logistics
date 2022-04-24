@@ -51,5 +51,8 @@ class Authentication {
       .then((res) => this.setAvatar(res.data));
     // return axios.get(`${HOST}/user/getImg?idUser=` + value);
   }
+  updateImg(data) {
+    return axios.post(`${HOST}/user/updateAvatarUser`, data);
+  }
 }
 export default new Authentication();
