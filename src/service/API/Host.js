@@ -1,2 +1,2 @@
-const HOST = "https://c708-113-161-210-219.ngrok.io";
+const HOST = "http://localhost:8090";
 export default HOST;
