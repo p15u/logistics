@@ -1,2 +1,2 @@
-const HOST = "https://c708-113-161-210-219.ngrok.io";
+const HOST = "https://894e-27-64-132-82.ngrok.io";
 export default HOST;
