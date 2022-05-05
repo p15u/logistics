@@ -90,7 +90,7 @@ const SignUp = (props) => {
         phone: phone,
         masothue: tax,
         passwordUser: password,
-        status: 1,
+        status: 3,
         idRole: 3,
         idWards: ward.id,
         address: address,

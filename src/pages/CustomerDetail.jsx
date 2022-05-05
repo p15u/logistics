@@ -379,7 +379,7 @@ export class CustomerDetail extends PureComponent {
                       textDecoration: "none",
                       color: `var(--text-color)`,
                     }}
-                    href="/admin/shipper"
+                    href="/admin/customers"
                   >
                     Danh sách khách hàng
                   </a>
